@@ -2,6 +2,8 @@
 namespace DependencyInjectionContainers
 {
     use Exception;
+    use ReflectionClass;
+    use ReflectionClass;
     use DependencyResolvers\IDependencyResolver;
 
     /**
@@ -10,6 +12,10 @@ namespace DependencyInjectionContainers
     class DependencyInjectionContainer implements IDependencyInjectionContainer
     {
         private $_boundInterfaces = array();
+
+        /**
+         * @var \DependencyResolvers\IDependencyResolver
+         */
         private $_dependencyResolver;
 
         /**
@@ -88,8 +94,7 @@ namespace DependencyInjectionContainers
                 return new $Class;
             }
 
-            $methodParameters = $this->_depencyResolver->ResolveMethodParameters($Class, '__construct');
-
+            $methodParameters = $this->_dependencyResolver->ResolveMethodParameters($Class, '__construct');
             $Parameters = array();
 
             if (count($methodParameters) > 0)
@@ -102,13 +107,19 @@ namespace DependencyInjectionContainers
                     }
                     else
                     {
-                        if ($Parameter->isDefaultValueAvailable())
+                        $parameterType = $this->_dependencyResolver->ResolveMethodParameterTypeFromDocComment($Class, '__construct', $Parameter->getName());
+
+                        if ($parameterType && class_exists($parameterType))
                         {
-                            $ParameterValue = $Parameter->getDefaultValue();
+                            $ParameterValue = $this->ResolveClass($Parameter->getName(), $parameterType);
                         }
                         else if (isset($AdditionalParameters[$Parameter->getName()]))
                         {
                             $ParameterValue = $AdditionalParameters[$Parameter->getName()];
+                        }
+                        else if ($Parameter->isDefaultValueAvailable())
+                        {
+                            $ParameterValue = $Parameter->getDefaultValue();
                         }
                         else
                         {
