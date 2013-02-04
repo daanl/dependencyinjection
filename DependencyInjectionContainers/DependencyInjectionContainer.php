@@ -3,7 +3,6 @@ namespace DependencyInjectionContainers
 {
     use Exception;
     use ReflectionClass;
-    use ReflectionClass;
     use DependencyResolvers\IDependencyResolver;
 
     /**
@@ -21,7 +20,10 @@ namespace DependencyInjectionContainers
         /**
          * Constructor
          */
-        public function __construct(){}
+        public function __construct()
+        {
+            $this->_dependencyResolver = new \DependencyResolvers\DependencyResolver();
+        }
 
         /**
          * Bind interface to Class
