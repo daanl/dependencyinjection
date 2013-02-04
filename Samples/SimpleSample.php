@@ -27,6 +27,6 @@ $container->Bind('Samples\Models\ICar')
 $car = $container->ResolveClass("Samples\Models\ICar");
 
 // Show values
-$car->Engine()->Start();
-$car->Driver()->Drive();
-$car->Engine()->Stop();
+$car->Engine()->Start(); // outputs: Starting default engine!.
+$car->Driver()->Drive(); // outputs: Driving!...
+$car->Engine()->Stop(); // outputs: Stopping default engine!
